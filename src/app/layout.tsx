@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JAM Project Quote Request",
-  description: "Submit a quote request for your project with JAM UAE or JAM KSA",
+  title: "JAM PEOPLE - Form Submission",
+  description: "Submit project details and information for JAM PEOPLE",
 };
 
 export default function RootLayout({
