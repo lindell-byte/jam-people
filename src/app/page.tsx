@@ -59,7 +59,7 @@ export default function Home() {
         setFormData({
           clientName: '',
           projectName: '',
-          Role: '',
+          role: '',
           location: '',
           startDate: '',
           endDate: '',
