@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import AuthGuard from '@/components/AuthGuard';
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -138,7 +139,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+    <AuthGuard>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-xl p-16">
           <div className="text-center mb-10">
@@ -450,5 +452,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </AuthGuard>
   );
 }
