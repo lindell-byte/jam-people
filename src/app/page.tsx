@@ -7,15 +7,27 @@ export default function Home() {
     clientName: '',
     projectName: '',
     eventType: '',
-    role: '',
-    quantity: '',
-    gender: '',
-    language: '',
     location: '',
     startDate: '',
     endDate: '',
     accountManagerInitials: ''
   });
+
+  const [roles, setRoles] = useState<Array<{
+    id: string;
+    role: string;
+    quantity: string;
+    gender: string;
+    language: string;
+  }>>([
+    {
+      id: '1',
+      role: '',
+      quantity: '',
+      gender: '',
+      language: ''
+    }
+  ]);
 
   const [timeSlots, setTimeSlots] = useState<{[key: string]: {startTime: string, endTime: string}}>({});
 
@@ -73,6 +85,32 @@ export default function Home() {
     }
   };
 
+  // Handle role changes
+  const handleRoleChange = (roleId: string, field: keyof typeof roles[0], value: string) => {
+    setRoles(prev => prev.map(role => 
+      role.id === roleId ? { ...role, [field]: value } : role
+    ));
+  };
+
+  // Add new role
+  const addRole = () => {
+    const newRoleId = Date.now().toString();
+    setRoles(prev => [...prev, {
+      id: newRoleId,
+      role: '',
+      quantity: '',
+      gender: '',
+      language: ''
+    }]);
+  };
+
+  // Remove role
+  const removeRole = (roleId: string) => {
+    if (roles.length > 1) {
+      setRoles(prev => prev.filter(role => role.id !== roleId));
+    }
+  };
+
   // Handle time slot changes
   const handleTimeSlotChange = (date: string, field: 'startTime' | 'endTime', value: string) => {
     setTimeSlots(prev => ({
@@ -101,6 +139,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           ...formData,
+          roles: roles,
           timeSlots: timeSlots
         }),
       });
@@ -114,15 +153,18 @@ export default function Home() {
           clientName: '',
           projectName: '',
           eventType: '',
-          role: '',
-          quantity: '',
-          gender: '',
-          language: '',
           location: '',
           startDate: '',
           endDate: '',
           accountManagerInitials: ''
         });
+        setRoles([{
+          id: '1',
+          role: '',
+          quantity: '',
+          gender: '',
+          language: ''
+        }]);
         setTimeSlots({});
       } else {
         const errorText = await response.text();
@@ -200,86 +242,120 @@ export default function Home() {
               />
             </div>
 
-            {/* Role and How many? */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2">
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-                  Role *
-                </label>
-                <input
-                  type="text"
-                  id="role"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black"
-                  placeholder="Enter your role"
-                />
+            {/* Roles Section */}
+            <div>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900">Roles Required</h3>
+                <button
+                  type="button"
+                  onClick={addRole}
+                  className="bg-indigo-600 text-white px-3 py-2 rounded-md font-medium hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 text-sm flex items-center gap-1"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add Role
+                </button>
               </div>
 
-              {/* How many? - Appears beside role field when role is filled */}
-              {formData.role && (
-                <div className="md:col-span-1">
-                  <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-2">
-                    How many? *
-                  </label>
-                  <input
-                    type="number"
-                    id="quantity"
-                    name="quantity"
-                    value={formData.quantity}
-                    onChange={handleInputChange}
-                    required
-                    min="1"
-                    max="999"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black text-center"
-                    placeholder="0"
-                  />
-                </div>
-              )}
+              <div className="space-y-4">
+                {roles.map((roleItem, index) => (
+                  <div key={roleItem.id} className="border border-gray-200 rounded-lg p-4 bg-white relative shadow-sm">
+                    {roles.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeRole(roleItem.id)}
+                        className="absolute top-3 right-3 text-red-500 hover:text-red-700 transition-colors duration-200"
+                        title="Remove this role"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
+                    
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center">
+                        <span className="text-xs font-medium text-indigo-600">{index + 1}</span>
+                      </div>
+                      <h4 className="text-sm font-medium text-gray-800">
+                        Role {index + 1}
+                      </h4>
+                    </div>
+
+                    {/* Role and Quantity */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+                      <div className="md:col-span-3">
+                        <label htmlFor={`role-${roleItem.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                          Role *
+                        </label>
+                        <input
+                          type="text"
+                          id={`role-${roleItem.id}`}
+                          value={roleItem.role}
+                          onChange={(e) => handleRoleChange(roleItem.id, 'role', e.target.value)}
+                          required
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black text-sm"
+                          placeholder="Enter role"
+                        />
+                      </div>
+
+                      <div className="md:col-span-1">
+                        <label htmlFor={`quantity-${roleItem.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                          Qty *
+                        </label>
+                        <input
+                          type="number"
+                          id={`quantity-${roleItem.id}`}
+                          value={roleItem.quantity}
+                          onChange={(e) => handleRoleChange(roleItem.id, 'quantity', e.target.value)}
+                          required
+                          min="1"
+                          max="999"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black text-center text-sm"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Gender and Language - Show when role is filled */}
+                    {roleItem.role && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-gray-100">
+                        <div>
+                          <label htmlFor={`gender-${roleItem.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                            Gender *
+                          </label>
+                          <input
+                            type="text"
+                            id={`gender-${roleItem.id}`}
+                            value={roleItem.gender}
+                            onChange={(e) => handleRoleChange(roleItem.id, 'gender', e.target.value)}
+                            required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black text-sm"
+                            placeholder="Gender"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label htmlFor={`language-${roleItem.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                            Language *
+                          </label>
+                          <input
+                            type="text"
+                            id={`language-${roleItem.id}`}
+                            value={roleItem.language}
+                            onChange={(e) => handleRoleChange(roleItem.id, 'language', e.target.value)}
+                            required
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black text-sm"
+                            placeholder="e.g., English, Spanish"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-
-            {/* Gender and Language - Conditional fields that appear after role is filled */}
-            {formData.role && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-2">
-                    Gender *
-                  </label>
-                  <select
-                    id="gender"
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-black"
-                  >
-                    <option value="">Select gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Non-binary">Non-binary</option>
-                    <option value="Prefer not to say">Prefer not to say</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-2">
-                    Language *
-                  </label>
-                  <input
-                    type="text"
-                    id="language"
-                    name="language"
-                    value={formData.language}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black"
-                    placeholder="Enter language (e.g., English, Spanish)"
-                  />
-                </div>
-              </div>
-            )}
 
             {/* Location */}
             <div>
@@ -421,17 +497,26 @@ export default function Home() {
           )}
 
           {/* Display current form data for demo */}
-          {Object.values(formData).some(value => value) && (
+          {(Object.values(formData).some(value => value) || roles.some(role => role.role)) && (
             <div className="mt-8 p-4 bg-gray-50 rounded-lg">
               <h3 className="font-medium text-gray-900 mb-2">Current Form Data:</h3>
               <div className="text-sm text-gray-600 space-y-1">
                 {formData.clientName && <p><strong>Client:</strong> {formData.clientName}</p>}
                 {formData.projectName && <p><strong>Project:</strong> {formData.projectName}</p>}
                 {formData.eventType && <p><strong>Event Type:</strong> {formData.eventType}</p>}
-                {formData.role && <p><strong>Role:</strong> {formData.role}</p>}
-                {formData.quantity && <p><strong>Quantity:</strong> {formData.quantity}</p>}
-                {formData.gender && <p><strong>Gender:</strong> {formData.gender}</p>}
-                {formData.language && <p><strong>Language:</strong> {formData.language}</p>}
+                {roles.some(role => role.role) && (
+                  <div className="mt-2">
+                    <strong>Roles:</strong>
+                    {roles.filter(role => role.role).map((role, index) => (
+                      <div key={role.id} className="ml-4 mt-1">
+                        <span className="font-medium">Role {index + 1}:</span> {role.role}
+                        {role.quantity && ` (${role.quantity})`}
+                        {role.gender && `, ${role.gender}`}
+                        {role.language && `, ${role.language}`}
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {formData.location && <p><strong>Location:</strong> {formData.location}</p>}
                 {formData.startDate && <p><strong>Start Date:</strong> {formData.startDate}</p>}
                 {formData.endDate && <p><strong>End Date:</strong> {formData.endDate}</p>}
