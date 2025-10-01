@@ -19,13 +19,15 @@ export default function Home() {
     quantity: string;
     gender: string;
     language: string;
+    hourlyRate: string;
   }>>([
     {
       id: '1',
       role: '',
       quantity: '',
       gender: '',
-      language: ''
+      language: '',
+      hourlyRate: ''
     }
   ]);
 
@@ -100,7 +102,8 @@ export default function Home() {
       role: '',
       quantity: '',
       gender: '',
-      language: ''
+      language: '',
+      hourlyRate: ''
     }]);
   };
 
@@ -163,7 +166,8 @@ export default function Home() {
           role: '',
           quantity: '',
           gender: '',
-          language: ''
+          language: '',
+          hourlyRate: ''
         }]);
         setTimeSlots({});
       } else {
@@ -183,12 +187,12 @@ export default function Home() {
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl p-16">
-          <div className="text-center mb-10">
-            <h1 className="text-5xl font-bold text-indigo-900 mb-4">JAM PEOPLE</h1>
-            <p className="text-gray-600 text-lg">Please fill out the form below</p>
-          </div>
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-lg shadow-xl p-16">
+            <div className="text-center mb-10">
+              <h1 className="text-5xl font-bold text-indigo-900 mb-4">JAM PEOPLE</h1>
+              <p className="text-gray-600 text-lg">Please fill out the form below</p>
+            </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Client Name */}
@@ -283,8 +287,8 @@ export default function Home() {
                       </h4>
                     </div>
 
-                    {/* Role and Quantity */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+                    {/* Role, Quantity, and Hourly Rate */}
+                    <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-3">
                       <div className="md:col-span-3">
                         <label htmlFor={`role-${roleItem.id}`} className="block text-sm font-medium text-gray-700 mb-1">
                           Role *
@@ -314,6 +318,23 @@ export default function Home() {
                           max="999"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black text-center text-sm"
                           placeholder="0"
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <label htmlFor={`hourlyRate-${roleItem.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                          Hourly Rate *
+                        </label>
+                        <input
+                          type="number"
+                          id={`hourlyRate-${roleItem.id}`}
+                          value={roleItem.hourlyRate}
+                          onChange={(e) => handleRoleChange(roleItem.id, 'hourlyRate', e.target.value)}
+                          required
+                          min="0"
+                          step="0.01"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-black text-sm"
+                          placeholder="0.00"
                         />
                       </div>
                     </div>
@@ -511,6 +532,7 @@ export default function Home() {
                       <div key={role.id} className="ml-4 mt-1">
                         <span className="font-medium">Role {index + 1}:</span> {role.role}
                         {role.quantity && ` (${role.quantity})`}
+                        {role.hourlyRate && ` - $${role.hourlyRate}/hr`}
                         {role.gender && `, ${role.gender}`}
                         {role.language && `, ${role.language}`}
                       </div>
@@ -535,8 +557,8 @@ export default function Home() {
             </div>
           )}
         </div>
+        </div>
       </div>
-    </div>
     </AuthGuard>
   );
 }
