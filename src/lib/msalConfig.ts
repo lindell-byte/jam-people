@@ -1,5 +1,11 @@
 import { Configuration, PopupRequest } from "@azure/msal-browser";
 
+// Debug logging for environment variables
+console.log("MSAL Config Debug:");
+console.log("CLIENT_ID:", process.env.NEXT_PUBLIC_AZURE_CLIENT_ID ? "✓ Set" : "✗ Missing");
+console.log("TENANT_ID:", process.env.NEXT_PUBLIC_AZURE_TENANT_ID ? "✓ Set" : "✗ Missing");
+console.log("REDIRECT_URI:", process.env.NEXT_PUBLIC_REDIRECT_URI ? "✓ Set" : "✗ Missing");
+
 // MSAL configuration
 export const msalConfig: Configuration = {
   auth: {
