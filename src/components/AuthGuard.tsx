@@ -41,17 +41,16 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     try {
       setIsLoading(true);
       setAuthError("");
-      await instance.loginPopup(loginRequest);
+      await instance.loginRedirect(loginRequest);
     } catch (error) {
       console.error("Login failed:", error);
       setAuthError("Login failed. Please try again.");
-    } finally {
       setIsLoading(false);
     }
   };
 
   const handleLogout = () => {
-    instance.logoutPopup();
+    instance.logoutRedirect();
     setIsAuthorized(false);
   };
 
