@@ -304,7 +304,14 @@ export default function LookupForm() {
 
         // Populate roles if they exist
         if (data.roles && Array.isArray(data.roles) && data.roles.length > 0) {
-          setRoles(data.roles.map((role: any, index: number) => ({
+          setRoles(data.roles.map((role: {
+            role?: string;
+            quantity?: string;
+            gender?: string;
+            language?: string;
+            hourlyRate?: string;
+            fixedOutgoingRate?: string;
+          }, index: number) => ({
             id: (index + 1).toString(),
             role: role.role || '',
             quantity: role.quantity || '',
